@@ -1,0 +1,34 @@
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+    color: #00B7FF;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1em;
+
+    .categories {
+        display: flex;
+        gap: 1em;
+    }
+}
+
+th {
+    text-align: left;
+    font-weight: bold;
+}
+td, th {
+    padding: 0.2em 0.4em;
+    min-width: 40px;
+}
+tbody {
+    tr:nth-child(odd) {
+        background-color: #eeeeee;
+    }
+}
