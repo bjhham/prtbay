@@ -18,13 +18,13 @@ import io.ktor.server.util.*
 
 @Suppress("unused")
 fun Application.configureRouting() {
-    val testMode: Boolean = property("testMode")
+    val testMode = propertyOrNull<Boolean>("testMode") == true
     val source: TorrentSource =
         if (testMode) MockTorrentSource
-        else property("source")
+        else property<PirateBay>("source")
     val qBittorrent: TorrentHost =
         if (testMode) MockTorrentHost
-        else property("qb")
+        else property<QBittorrent>("qb")
 
     routing {
         staticResources("/", "/web")

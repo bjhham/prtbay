@@ -8,15 +8,14 @@ plugins {
 val refType: String? = System.getenv("GITHUB_REF_TYPE")
 val refName: String? = System.getenv("GITHUB_REF_NAME")
 
-if (refName != null) {
-    println("Building release $refName")
-}
-
 subprojects {
     group = "com.github.bjhham.prtbay"
     version = when {
-        refType == "tag" && refName?.startsWith("release-") == true ->
-            refName.removePrefix("release-")
+        refType == "tag" && refName?.startsWith("release-") == true -> {
+            refName.removePrefix("release-").also {
+                println("Building release $it")
+            }
+        }
         else -> "1.0.0-SNAPSHOT"
     }
 }
