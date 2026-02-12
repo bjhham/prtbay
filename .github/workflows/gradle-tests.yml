@@ -40,6 +40,6 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: |
-            **/build/test-results/jvmKotest/*.xml
+            **/build/test-results/*/*.xml
           check_name: Unit Test Results
           report_individual_runs: true
