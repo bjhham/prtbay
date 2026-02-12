@@ -6,6 +6,6 @@ plugins {
 }
 
 subprojects {
-    group = "com.github.bjhham"
-    version = "1.0.0-SNAPSHOT"
+    group = "com.github.bjhham.prtbay"
+    version = System.getenv("RELEASE_VERSION") ?: "1.0.0-SNAPSHOT"
 }
