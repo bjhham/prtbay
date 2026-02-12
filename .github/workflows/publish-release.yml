@@ -1,0 +1,50 @@
+name: Publish Snapshot
+on:
+  push:
+    tags:
+      - "release-*"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish Release to GH Packages
+    runs-on: ubuntu-latest
+    environment: Publish Environment
+
+    steps:
+      - name: Set RELEASE_VERSION from tag
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [[ "${TAG}" != release-* ]]; then
+            echo "This workflow only supports tags starting with 'release-'. Got: ${TAG}"
+            exit 1
+          fi
+
+          RELEASE_VERSION="${TAG#release-}"
+          if [[ -z "${RELEASE_VERSION}" ]]; then
+            echo "RELEASE_VERSION is empty. Tag must look like: release-1.0.0"
+            exit 1
+          fi
+
+          echo "RELEASE_VERSION=${RELEASE_VERSION}" >> "${GITHUB_ENV}"
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Publish to Maven
+        run: ./gradlew :server:publish --no-daemon --stacktrace
+        env:
+          GH_USER: ${{ vars.GH_USER }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
