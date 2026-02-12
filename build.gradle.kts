@@ -5,7 +5,18 @@ plugins {
     alias(libs.plugins.ktor) apply false
 }
 
+val refType: String? = System.getenv("GITHUB_REF_TYPE")
+val refName: String? = System.getenv("GITHUB_REF_NAME")
+
+if (refName != null) {
+    println("Building release $refName")
+}
+
 subprojects {
     group = "com.github.bjhham.prtbay"
-    version = System.getenv("RELEASE_VERSION") ?: "1.0.0-SNAPSHOT"
+    version = when {
+        refType == "tag" && refName?.startsWith("release-") == true ->
+            refName.removePrefix("release-")
+        else -> "1.0.0-SNAPSHOT"
+    }
 }
