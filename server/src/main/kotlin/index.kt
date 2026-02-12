@@ -93,17 +93,14 @@ fun TBODY.searchResultRows(category: String, results: List<TorrentResult>) {
                         swap = "none"
                         disabledElt = "find button[type=submit]"
 
-// TODO Ktor bug KTOR-9329
-//                        on["before-request"] = "var b=this.querySelector('button[type=submit]'); b.dataset.originalHtml=b.dataset.originalHtml||b.innerHTML; b.innerHTML='Saving...'; b.disabled=true;"
-//                        on["after-request"] = "var b=this.querySelector('button[type=submit]'); if(event.detail.successful){b.innerHTML='Saved ✅'; b.disabled=true;}"
-//                        on["response-error"] = "var b=this.querySelector('button[type=submit]'); b.innerHTML=b.dataset.originalHtml||b.innerHTML; b.disabled=false;"
+                    // TODO Fix KTOR-9329
+                    //   on["before-request"] = SaveButton.beforeRequest
+                    //   on["after-request"] = SaveButton.afterRequest
+                    //   on["response-error"] = SaveButton.responseError
                     }
-                    attributes["hx-on::before-request"] =
-                        "var b=this.querySelector('button[type=submit]'); b.dataset.originalHtml=b.dataset.originalHtml||b.innerHTML; b.innerHTML='Saving...'; b.disabled=true;"
-                    attributes["hx-on::after-request"] =
-                        "var b=this.querySelector('button[type=submit]'); if(event.detail.successful){b.innerHTML='Saved ✅'; b.disabled=true;}"
-                    attributes["hx-on::response-error"] =
-                        "var b=this.querySelector('button[type=submit]'); b.innerHTML=b.dataset.originalHtml||b.innerHTML; b.disabled=false;"
+                    attributes["hx-on::before-request"] = SaveButton.beforeRequest
+                    attributes["hx-on::after-request"] = SaveButton.afterRequest
+                    attributes["hx-on::response-error"] = SaveButton.responseError
 
                     input(type = InputType.hidden, name = "link") {
                         value = t.link
@@ -116,4 +113,30 @@ fun TBODY.searchResultRows(category: String, results: List<TorrentResult>) {
             }
         }
     }
+}
+
+object SaveButton {
+    // language=JavaScript
+    val beforeRequest = js("""
+        const b=this.querySelector('button[type=submit]');
+        b.dataset.originalHtml=b.dataset.originalHtml||b.innerHTML; 
+        b.innerHTML='Saving...'; 
+        b.disabled=true;
+    """)
+
+    // language=JavaScript
+    val afterRequest = js("""
+        const b=this.querySelector('button[type=submit]');
+        if (event.detail.successful){ b.innerHTML='Saved ✅'; b.disabled=true; }
+    """.trimIndent())
+
+    // language=JavaScript
+    val responseError = js("""
+        var b=this.querySelector('button[type=submit]');
+        b.innerHTML=b.dataset.originalHtml||b.innerHTML;
+        b.disabled=false;
+    """.trimIndent())
+
+    private fun js(text: String): String =
+        text.trimIndent().replace('\n', ' ')
 }
