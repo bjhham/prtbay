@@ -1,4 +1,4 @@
-package com.github.bjhham.search
+package com.github.bjhham.prtbay.search
 
 import com.fleeksoft.ksoup.Ksoup
 import io.ktor.client.*
@@ -19,8 +19,9 @@ data class PirateBay(
         search: String?
     ): List<TorrentResult>? {
         val categoryId = when(category) {
-            "TV" -> 0
+            "TV" -> 205
             "Movies" -> 201
+            // everything else
             else -> 0
         }
         return search?.let {

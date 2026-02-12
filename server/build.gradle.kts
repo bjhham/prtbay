@@ -34,4 +34,7 @@ dependencies {
 
     implementation(libs.ksoup.kotlinxIo)
     implementation(libs.logback.classic)
+
+    testImplementation(kotlin("test"))
+    testImplementation(ktorLibs.server.testHost)
 }

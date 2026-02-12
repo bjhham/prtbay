@@ -1,24 +1,34 @@
-package com.github.bjhham
+package com.github.bjhham.prtbay
 
-import com.github.bjhham.hosting.QBittorrent
-import com.github.bjhham.search.PirateBay
+import com.github.bjhham.prtbay.hosting.MockTorrentHost
+import com.github.bjhham.prtbay.hosting.QBittorrent
+import com.github.bjhham.prtbay.hosting.TorrentHost
+import com.github.bjhham.prtbay.search.MockTorrentSource
+import com.github.bjhham.prtbay.search.PirateBay
+import com.github.bjhham.prtbay.search.TorrentSource
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 import io.ktor.server.html.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
-import io.ktor.server.response.respondRedirect
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.util.getOrFail
+import io.ktor.server.util.*
 
+@Suppress("unused")
 fun Application.configureRouting() {
     val testMode: Boolean = property("testMode")
-    val source: PirateBay = property("source")
-    val qBittorrent: QBittorrent = property("qb")
+    val source: TorrentSource =
+        if (testMode) MockTorrentSource
+        else property("source")
+    val qBittorrent: TorrentHost =
+        if (testMode) MockTorrentHost
+        else property("qb")
 
     routing {
         staticResources("/", "/web")
-        
+
         get("/") {
             val search = call.parameters["search"]
             val categoryString = call.parameters["category"]
@@ -33,11 +43,11 @@ fun Application.configureRouting() {
             }
         }
 
-        post("/download/{category}") {
+        post("/torrents/{category}") {
             val category = call.parameters["category"]!!
             val magnetLink = call.receiveParameters().getOrFail("link")
             qBittorrent.addTorrent(category, magnetLink)
-            call.respondRedirect("/") // TODO
+            call.respond(HttpStatusCode.NoContent)
         }
     }
 }

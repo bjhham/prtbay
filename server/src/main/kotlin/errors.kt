@@ -1,4 +1,4 @@
-package com.github.bjhham
+package com.github.bjhham.prtbay
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -6,6 +6,7 @@ import io.ktor.server.html.respondHtml
 import io.ktor.server.plugins.statuspages.StatusPages
 import kotlinx.html.*
 
+@Suppress("unused")
 fun Application.errorHandling() {
     install(StatusPages) {
         exception<Exception> { call, cause ->

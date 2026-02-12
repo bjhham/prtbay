@@ -1,6 +1,8 @@
-package com.github.bjhham
+package com.github.bjhham.prtbay
 
-import com.github.bjhham.search.TorrentResult
+import com.github.bjhham.prtbay.search.TorrentResult
+import io.ktor.htmx.html.hx
+import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*
 
 fun HTML.searchPage(
@@ -82,13 +84,33 @@ fun TBODY.searchResultRows(category: String, results: List<TorrentResult>) {
                     +"\uD83E\uDDF2"
                 }
             }
+            // Save button
             td {
-                form(action = "/download/$category", method = FormMethod.post) {
+                @OptIn(ExperimentalKtorApi::class)
+                form(method = FormMethod.post) {
+                    attributes.hx {
+                        post = "/torrents/$category"
+                        swap = "none"
+                        disabledElt = "find button[type=submit]"
+
+// TODO Ktor bug KTOR-9329
+//                        on["before-request"] = "var b=this.querySelector('button[type=submit]'); b.dataset.originalHtml=b.dataset.originalHtml||b.innerHTML; b.innerHTML='Saving...'; b.disabled=true;"
+//                        on["after-request"] = "var b=this.querySelector('button[type=submit]'); if(event.detail.successful){b.innerHTML='Saved ✅'; b.disabled=true;}"
+//                        on["response-error"] = "var b=this.querySelector('button[type=submit]'); b.innerHTML=b.dataset.originalHtml||b.innerHTML; b.disabled=false;"
+                    }
+                    attributes["hx-on::before-request"] =
+                        "var b=this.querySelector('button[type=submit]'); b.dataset.originalHtml=b.dataset.originalHtml||b.innerHTML; b.innerHTML='Saving...'; b.disabled=true;"
+                    attributes["hx-on::after-request"] =
+                        "var b=this.querySelector('button[type=submit]'); if(event.detail.successful){b.innerHTML='Saved ✅'; b.disabled=true;}"
+                    attributes["hx-on::response-error"] =
+                        "var b=this.querySelector('button[type=submit]'); b.innerHTML=b.dataset.originalHtml||b.innerHTML; b.disabled=false;"
+
                     input(type = InputType.hidden, name = "link") {
                         value = t.link
                     }
-                    input(type = InputType.submit) {
-                        value = "\uD83D\uDCBE"
+
+                    button(type = ButtonType.submit) {
+                        +"Save \uD83D\uDCBE"
                     }
                 }
             }
