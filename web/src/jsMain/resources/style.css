@@ -1,10 +1,57 @@
+:root {
+    color-scheme: light dark;
+
+    --bg: #ffffff;
+    --text: #111111;
+    --muted: #666666;
+
+    --link: #00B7FF;
+    --border: #dddddd;
+
+    --row-alt: #eeeeee;
+    --focus: rgba(0, 183, 255, 0.35);
+
+    --control-bg: #ffffff;
+    --control-text: #111111;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0f1115;
+        --text: #e7eaf0;
+        --muted: #a7adbb;
+
+        --link: #6bc7ff;
+        --border: #2a2f3a;
+
+        --row-alt: #161a22;
+        --focus: rgba(107, 199, 255, 0.35);
+
+        --control-bg: #121722;
+        --control-text: #e7eaf0;
+    }
+}
+
 body {
     padding: 50px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+
+    background-color: var(--bg);
+    color: var(--text);
 }
 
 a {
-    color: #00B7FF;
+    color: var(--link);
+    text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
 }
 
 form {
@@ -23,12 +70,35 @@ th {
     text-align: left;
     font-weight: bold;
 }
+
+table {
+    border-collapse: collapse;
+}
+
 td, th {
     padding: 0.2em 0.4em;
     min-width: 40px;
+    border-bottom: 1px solid var(--border);
 }
+
 tbody {
     tr:nth-child(odd) {
-        background-color: #eeeeee;
+        background-color: var(--row-alt);
     }
+}
+
+input[type="text"],
+input[type="submit"],
+button,
+select,
+textarea {
+    background-color: var(--control-bg);
+    color: var(--control-text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.4em 0.6em;
+}
+
+input[type="radio"] {
+    accent-color: var(--link);
 }

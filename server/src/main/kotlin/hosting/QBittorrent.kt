@@ -1,4 +1,4 @@
-package com.github.bjhham.hosting
+package com.github.bjhham.prtbay.hosting
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
