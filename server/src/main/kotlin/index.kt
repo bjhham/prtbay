@@ -6,8 +6,9 @@ import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*
 
 fun HTML.searchPage(
-    search: String = "",
-    category: String = "TV",
+    categories: List<Category>,
+    searchValue: String = "",
+    categoryValue: String = "All",
     results: List<TorrentResult>? = null,
 ) {
     head {
@@ -21,33 +22,14 @@ fun HTML.searchPage(
 
         form(action="/") {
             div("categories") {
-                div("category") {
-                    input(type = InputType.radio, name = "category") {
-                        id = "category-tv"
-                        value = "TV"
-                        checked = category == "TV"
-                    }
-                    label {
-                        htmlFor = "category-tv"
-                        +"TV \uD83D\uDCFA"
-                    }
-                }
-                div("category") {
-                    input(type = InputType.radio, name = "category") {
-                        id = "category-movies"
-                        value = "Movies"
-                        checked = category == "Movies"
-                    }
-                    label {
-                        htmlFor = "category-movies"
-                        +"Movies \uD83C\uDFA5"
-                    }
+                for (c in categories) {
+                    categorySelector(c.name, categoryValue)
                 }
             }
             div("form-option") {
                 input(type = InputType.text, name = "search") {
                     placeholder = "Search titles..."
-                    value = search
+                    value = searchValue
                 }
             }
         }
@@ -63,11 +45,25 @@ fun HTML.searchPage(
                     }
                 }
                 tbody {
-                    searchResultRows(category, results)
+                    searchResultRows(categoryValue, results)
                 }
             }
         } else {
             p { +"Enter a search term above to see results." }
+        }
+    }
+}
+
+fun DIV.categorySelector(name: String, currentValue: String?) {
+    div("category") {
+        input(type = InputType.radio, name = "category") {
+            id = "category-${name.lowercase()}"
+            value = name
+            checked = currentValue == name
+        }
+        label {
+            htmlFor = "category-${name.lowercase()}"
+            +name
         }
     }
 }

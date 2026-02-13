@@ -1,18 +1,29 @@
 package com.github.bjhham.prtbay.search
 
 import com.fleeksoft.ksoup.Ksoup
+import com.github.bjhham.prtbay.Category
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.server.application.Application
+import io.ktor.server.config.property
+import kotlinx.html.Entities
 import kotlinx.serialization.Serializable
+
+fun Application.pirateBay(categories: List<Category>): TorrentSource =
+    property<PirateBay>("source").withCategories(categories)
 
 @Serializable
 data class PirateBay(
-    val url: String
+    val url: String,
+    val categories: Map<String, Int> = emptyMap()
 ): TorrentSource {
     private val httpClient by lazy { HttpClient(CIO) }
+
+    fun withCategories(categories: List<Category>) =
+        copy(categories = categories.associate { it.name to it.pirateBayId!! })
 
     override suspend fun fetchResults(
         category: String?,

@@ -33,6 +33,7 @@ dependencies {
     implementation(ktorLibs.server.htmlBuilder)
     implementation(ktorLibs.server.contentNegotiation)
     implementation(ktorLibs.server.statusPages)
+    implementation(ktorLibs.server.di)
 
     implementation(ktorLibs.client.core)
     implementation(ktorLibs.client.cio)
