@@ -10,7 +10,7 @@ class ServerTests {
 
     @Test
     fun testSearch() = testApplication {
-        configure("application.conf", "test.conf")
+        configure("test.conf")
 
         val html = client.get("?search=test").bodyAsText()
         val rowCount = Regex("<tr>").findAll(html).count()

@@ -1,14 +1,9 @@
 package com.github.bjhham.prtbay
 
-import com.github.bjhham.prtbay.hosting.MockTorrentHost
-import com.github.bjhham.prtbay.hosting.QBittorrent
 import com.github.bjhham.prtbay.hosting.TorrentHost
-import com.github.bjhham.prtbay.search.MockTorrentSource
-import com.github.bjhham.prtbay.search.PirateBay
 import com.github.bjhham.prtbay.search.TorrentSource
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
-import io.ktor.server.config.*
 import io.ktor.server.html.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
@@ -17,15 +12,11 @@ import io.ktor.server.routing.*
 import io.ktor.server.util.*
 
 @Suppress("unused")
-fun Application.configureRouting() {
-    val testMode = propertyOrNull<Boolean>("testMode") == true
-    val source: TorrentSource =
-        if (testMode) MockTorrentSource
-        else property<PirateBay>("source")
-    val qBittorrent: TorrentHost =
-        if (testMode) MockTorrentHost
-        else property<QBittorrent>("qb")
-
+fun Application.configureRouting(
+    categories: List<Category>,
+    source: TorrentSource,
+    qBittorrent: TorrentHost
+) {
     routing {
         staticResources("/", "/web")
 
@@ -36,8 +27,9 @@ fun Application.configureRouting() {
 
             call.respondHtml {
                 searchPage(
+                    categories,
                     search.orEmpty(),
-                    categoryString ?: "TV",
+                    categoryString ?: "All",
                     results
                 )
             }
